@@ -242,8 +242,17 @@ namespace BizHawk.Client.Common
 			{
 				if (Global.Emulator.Frame < Movie.FrameCount) // This scenario can happen from rewinding (suddenly we are back in the movie, so hook back up to the movie
 				{
-					Movie.SwitchToPlay();
-					LatchInputFromLog();
+					// For read-only mode we want to play the movie input, otherwise we want player input
+					if (Global.MovieSession.ReadOnly == true)
+					{
+						Movie.SwitchToPlay();
+						LatchInputFromLog();
+					}
+					else
+					{
+						Movie.SwitchToRecord();
+						LatchInputFromPlayer(Global.MovieInputSourceAdapter);
+					}
 				}
 				else
 				{
@@ -252,7 +261,16 @@ namespace BizHawk.Client.Common
 			}
 			else if (Movie.IsPlaying)
 			{
-				LatchInputFromLog();
+				// For read-only mode we want to play the movie input, otherwise we want player input
+				if (Global.MovieSession.ReadOnly == true)
+				{
+					LatchInputFromLog();
+				}
+				else
+				{
+					Movie.SwitchToRecord();
+					LatchInputFromPlayer(Global.MovieInputSourceAdapter);
+				}
 
 				if (Movie.IsRecording) // The movie end situation can cause the switch to record mode, in that case we need to capture some input for this frame
 				{

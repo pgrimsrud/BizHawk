@@ -162,6 +162,10 @@ namespace BizHawk.Client.Common
 			{
 				shouldCapture = true; // Markers shoudl always get priority
 			}
+			else if (frame + 100 > LastKey)
+			{
+				shouldCapture = true;
+			}
 			else
 			{
 				shouldCapture = frame - States.Keys.LastOrDefault(k => k < frame) >= StateFrequency;

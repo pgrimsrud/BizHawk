@@ -5,6 +5,7 @@ namespace BizHawk.Client.EmuHawk
 	public partial class TAStudio : IControlMainform
 	{
 		private bool _suppressAskSave = false;
+		private bool _alreadyRewinding = false;
 
 		public bool WantsToControlReadOnly { get { return false; } }
 		public void ToggleReadOnly()
@@ -31,7 +32,14 @@ namespace BizHawk.Client.EmuHawk
 
 		public bool Rewind()
 		{
-			GoToPreviousFrame();
+			if (_alreadyRewinding == false)
+			{
+				// We may have gotten here from Rewind in StepRunLoop_Core
+				// we want to turn off the rewind control to prevent unintentional recursion
+				_alreadyRewinding = true;
+				GoToPreviousFrame();
+				_alreadyRewinding = false;
+			}
 			return true;
 		}
 

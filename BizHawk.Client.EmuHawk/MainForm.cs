@@ -3604,6 +3604,11 @@ namespace BizHawk.Client.EmuHawk
 				if (Global.MovieSession.Movie.IsActive)
 				{
 					Global.MovieSession.ReadOnly ^= true;
+					if (Global.MovieSession.ReadOnly == true)
+					{
+						Global.MovieSession.Movie.SwitchToPlay();
+					}
+
 					GlobalWin.OSD.AddMessage(Global.MovieSession.ReadOnly ? "Movie read-only mode" : "Movie read+write mode");
 				}
 				else
