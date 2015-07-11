@@ -21,11 +21,12 @@ namespace BizHawk.Client.Common
 			base.RecordFrame(frame, source);
 
 			LagLog.RemoveFrom(frame);
+			StateManager.Invalidate(frame+1);
 			LagLog[frame] = Global.Emulator.AsInputPollable().IsLagFrame;
 
 			if (!SupressGreenzonging)
 			{
-				StateManager.Capture();
+				// StateManager.Capture();
 			}
 
 			if (frame != 0)
