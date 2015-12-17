@@ -2832,6 +2832,28 @@ namespace BizHawk.Client.EmuHawk
 					GlobalWin.Tools.LuaConsole.LuaImp.CallFrameAfterEvent();
 				}
 
+				{
+					//Custom hack stuff for judging
+					int maxLength = 28800;
+					int postMovieBuffer = 3600;
+
+					//check a bunch of stuff on the first frame that you don't need to check every frame
+					if (Global.MovieSession.Movie.FrameCount > maxLength ||
+					    Global.MovieSession.Movie.StartsFromSaveRam == true ||
+						Global.MovieSession.Movie.StartsFromSavestate == true ||
+					    Global.MovieSession.Movie.IsFinished && Global.Emulator.Frame == (Global.MovieSession.Movie.FrameCount + postMovieBuffer))
+					{
+						_exit = true;
+						_exitCode = -1;
+					}
+
+					if (Global.Emulator.ServiceProvider.GetService<IMemoryDomains>().MainMemory.PeekByte(0x002C) == 1)
+					{
+						_exit = true;
+						_exitCode = Global.Emulator.Frame;
+					}
+				}
+
 				if (IsTurboing)
 				{
 					GlobalWin.Tools.FastUpdateAfter();
