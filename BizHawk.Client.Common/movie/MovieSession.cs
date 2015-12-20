@@ -465,14 +465,14 @@ namespace BizHawk.Client.Common
 			{
 				movie.Load(false);
 				
-				if (movie.SystemID != emulator.SystemId)
-				{
-					throw new MoviePlatformMismatchException(
-						string.Format(
-						"Movie system Id ({0}) does not match the currently loaded platform ({1}), unable to load",
-						movie.SystemID,
-						emulator.SystemId));
-				}
+				//if (movie.SystemID != emulator.SystemId)
+				//{
+				//	throw new MoviePlatformMismatchException(
+				//		string.Format(
+				//		"Movie system Id ({0}) does not match the currently loaded platform ({1}), unable to load",
+				//		movie.SystemID,
+				//		emulator.SystemId));
+				//}
 			}
 
 			// TODO: Delete this, this save is utterly useless.

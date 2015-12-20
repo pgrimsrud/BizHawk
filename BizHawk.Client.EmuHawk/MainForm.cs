@@ -2653,6 +2653,19 @@ namespace BizHawk.Client.EmuHawk
 			}
 		}
 
+		private void SaveResults(int frames)
+		{
+			string fn = Global.MovieSession.Movie.Filename;
+			FileInfo info = new FileInfo(fn);
+			using (var fs = new FileStream(info.Directory.FullName + Path.DirectorySeparatorChar + "results" + Path.DirectorySeparatorChar + frames.ToString() + "-" + Path.GetFileNameWithoutExtension(fn), FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+			{
+				using (var sw = new StreamWriter(fs))
+				{
+					sw.Write(Global.MovieSession.Movie.HeaderEntries.ToString());
+				}
+			}
+		}
+
 		private void StepRunLoop_Core(bool force = false)
 		{
 			var runFrame = false;
@@ -2836,6 +2849,7 @@ namespace BizHawk.Client.EmuHawk
 					//Custom hack stuff for judging
 					int maxLength = 28800;
 					int postMovieBuffer = 3600;
+					IMemoryDomains d;
 
 					//check a bunch of stuff on the first frame that you don't need to check every frame
 					if (Global.MovieSession.Movie.FrameCount > maxLength ||
@@ -2843,12 +2857,15 @@ namespace BizHawk.Client.EmuHawk
 						Global.MovieSession.Movie.StartsFromSavestate == true ||
 					    Global.MovieSession.Movie.IsFinished && Global.Emulator.Frame == (Global.MovieSession.Movie.FrameCount + postMovieBuffer))
 					{
+						SaveResults(-1);
 						_exit = true;
 						_exitCode = -1;
 					}
 
-					if (Global.Emulator.ServiceProvider.GetService<IMemoryDomains>().MainMemory.PeekByte(0x002C) == 1)
+					d = Global.Emulator.ServiceProvider.GetService<IMemoryDomains>();
+					if (d != null && d.MainMemory.PeekByte(0x002C) == 1)
 					{
+						SaveResults(Global.Emulator.Frame);
 						_exit = true;
 						_exitCode = Global.Emulator.Frame;
 					}
